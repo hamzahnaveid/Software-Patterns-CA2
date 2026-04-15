@@ -3,16 +3,12 @@ package com.software_patterns.ca2.entity;
 import com.software_patterns.ca2.enums.UserRole;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
 public class User {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
 	
+	@Id
 	private String email;
 	private String password;
 	private String name;
