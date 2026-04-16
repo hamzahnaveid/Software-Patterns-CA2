@@ -1,5 +1,8 @@
 package com.software_patterns.ca2.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,12 +19,16 @@ import com.software_patterns.ca2.dto.LoginRequest;
 import com.software_patterns.ca2.dto.RegisterRequest;
 import com.software_patterns.ca2.entity.User;
 import com.software_patterns.ca2.enums.UserRole;
+import com.software_patterns.ca2.utils.JwtUtil;
 
 @RestController
 public class AuthController {
 	
 	@Autowired
 	UserDao userDao;
+	
+	@Autowired
+	JwtUtil jwtUtil;
 	
 	@CrossOrigin(origins = "http://localhost:4200")
 	@PostMapping("/register")
@@ -59,7 +66,14 @@ public class AuthController {
 		User user = userDao.findByEmail(request.getEmail()).get();
 		
 		if (user.getEmail().equals(request.getEmail()) && user.getPassword().equals(request.getPassword())) {
-			return new ResponseEntity<>(HttpStatus.OK);
+			String token = jwtUtil.generateToken(user);
+
+	        Map<String, Object> response = new HashMap<>();
+	        response.put("token", token);
+	        response.put("user", user);
+
+			
+			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 		
 		return new ResponseEntity<>("Invalid credentials", HttpStatus.NOT_ACCEPTABLE);
