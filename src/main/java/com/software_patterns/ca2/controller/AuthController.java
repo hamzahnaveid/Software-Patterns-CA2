@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.software_patterns.ca2.dao.UserDao;
+import com.software_patterns.ca2.dto.LoginRequest;
 import com.software_patterns.ca2.dto.RegisterRequest;
 import com.software_patterns.ca2.entity.User;
 import com.software_patterns.ca2.enums.UserRole;
@@ -44,6 +46,23 @@ public class AuthController {
 		
 		userDao.save(user);
 		return new ResponseEntity<>(HttpStatus.OK);
+	}
+	
+	@CrossOrigin(origins = "http://localhost:4200")
+	@PostMapping("/login")
+	@ResponseBody
+	public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+		if (!userDao.userExists(request.getEmail())) {
+			return new ResponseEntity<>("Invalid credentials", HttpStatus.NOT_ACCEPTABLE);
+		}
+		
+		User user = userDao.findByEmail(request.getEmail()).get();
+		
+		if (user.getEmail().equals(request.getEmail()) && user.getPassword().equals(request.getPassword())) {
+			return new ResponseEntity<>(HttpStatus.OK);
+		}
+		
+		return new ResponseEntity<>("Invalid credentials", HttpStatus.NOT_ACCEPTABLE);
 	}
 
 }
