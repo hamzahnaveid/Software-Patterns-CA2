@@ -20,6 +20,7 @@ import com.software_patterns.ca2.dao.ProductDao;
 import com.software_patterns.ca2.dto.ProductRequest;
 import com.software_patterns.ca2.entity.Product;
 import com.software_patterns.ca2.service.ProductSearchService;
+import com.software_patterns.ca2.service.ProductSortService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -36,6 +37,9 @@ public class AdminProductController {
 	
 	@Autowired
 	ProductSearchService searchService;
+	
+	@Autowired
+	ProductSortService sortService;
 	
 	@CrossOrigin(origins = "http://localhost:4200")
 	@PostMapping("/add-product")
@@ -65,11 +69,18 @@ public class AdminProductController {
 	@CrossOrigin(origins = "http://localhost:4200")
 	@GetMapping("/search")
 	@ResponseBody
-	public ResponseEntity<List<Product>> getProductsByTerm(@RequestParam String term) {
+	public ResponseEntity<List<Product>> getProductsByTermAndSort(@RequestParam String term, @RequestParam String sortBy, @RequestParam String type) {
+		List<Product> products;
+		
 		if (term.isEmpty()) {
-			return getProducts();
+			products = productDao.findAll();
+		}
+		else {
+			products = searchService.search(term);
 		}
 		
-		return new ResponseEntity<List<Product>>(searchService.search(term), HttpStatus.OK);
+		products = sortService.sort(products, sortBy, type);
+		
+		return new ResponseEntity<List<Product>>(products, HttpStatus.OK);
 	}
 }
