@@ -28,10 +28,9 @@ public class Product {
 	private double price;
 	private int stock;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "category_id")
 	@OnDelete(action = OnDeleteAction.CASCADE)
-	@JsonIgnore
 	private Category category;
 	
 	@Lob
