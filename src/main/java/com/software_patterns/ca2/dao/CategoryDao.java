@@ -1,5 +1,6 @@
 package com.software_patterns.ca2.dao;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +31,8 @@ public class CategoryDao {
 		repo.deleteById(id);
 	}
 	
-	public void findAll() {
-		repo.findAll();
+	public List<Category> findAll() {
+		return (List<Category>) repo.findAll();
 	}
 
 }

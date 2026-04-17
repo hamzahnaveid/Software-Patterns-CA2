@@ -26,6 +26,7 @@ public class Product {
 	private String name;
 	private String manufacturer;
 	private double price;
+	private int stock;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "category_id")
