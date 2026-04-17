@@ -38,4 +38,8 @@ public class ProductDao {
 	public List<Product> findAllByNameContaining(String name) {
 		return (List<Product>) repo.findAllByNameContaining(name);
 	}
+	
+	public List<Product> findAllByCategoryContaining(String category) {
+		return (List<Product>) repo.findAllByCategory_NameContaining(category);
+	}
 }

@@ -9,9 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,6 +19,7 @@ import com.software_patterns.ca2.dao.CategoryDao;
 import com.software_patterns.ca2.dao.ProductDao;
 import com.software_patterns.ca2.dto.ProductRequest;
 import com.software_patterns.ca2.entity.Product;
+import com.software_patterns.ca2.service.ProductSearchService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -32,6 +33,9 @@ public class AdminProductController {
 	
 	@Autowired
 	CategoryDao categoryDao;
+	
+	@Autowired
+	ProductSearchService searchService;
 	
 	@CrossOrigin(origins = "http://localhost:4200")
 	@PostMapping("/add-product")
@@ -59,9 +63,13 @@ public class AdminProductController {
 	}
 	
 	@CrossOrigin(origins = "http://localhost:4200")
-	@GetMapping("/search/{name}")
+	@GetMapping("/search")
 	@ResponseBody
-	public ResponseEntity<List<Product>> getProductsByName(@PathVariable String name) {
-		return new ResponseEntity<List<Product>>(productDao.findAllByNameContaining(name), HttpStatus.OK);
+	public ResponseEntity<List<Product>> getProductsByTerm(@RequestParam String term) {
+		if (term.isEmpty()) {
+			return getProducts();
+		}
+		
+		return new ResponseEntity<List<Product>>(searchService.search(term), HttpStatus.OK);
 	}
 }
