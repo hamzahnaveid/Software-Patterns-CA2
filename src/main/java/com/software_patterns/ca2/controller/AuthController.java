@@ -7,18 +7,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.software_patterns.ca2.dao.OrderDao;
 import com.software_patterns.ca2.dao.UserDao;
 import com.software_patterns.ca2.dto.LoginRequest;
 import com.software_patterns.ca2.dto.RegisterRequest;
 import com.software_patterns.ca2.entity.User;
 import com.software_patterns.ca2.enums.UserRole;
+import com.software_patterns.ca2.factory.OrderFactory;
 import com.software_patterns.ca2.utils.JwtUtil;
 
 @RestController
@@ -26,6 +27,12 @@ public class AuthController {
 	
 	@Autowired
 	UserDao userDao;
+	
+	@Autowired
+	OrderDao orderDao;
+	
+	@Autowired
+	OrderFactory orderFactory;
 	
 	@Autowired
 	JwtUtil jwtUtil;
@@ -52,6 +59,12 @@ public class AuthController {
 		}
 		
 		userDao.save(user);
+		
+		if(user.getRole() == UserRole.CUSTOMER) {
+			orderDao.save(orderFactory.createOrder(user));
+
+		}
+		
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
