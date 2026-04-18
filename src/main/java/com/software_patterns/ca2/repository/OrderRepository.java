@@ -10,6 +10,8 @@ import com.software_patterns.ca2.entity.Order;
 @Repository
 public interface OrderRepository extends CrudRepository<Order, Integer>{
 	
-	List<Order> findAllByUser_Email(String email);
+	List<Order> findAllByUserEmail(String email);
+	
+	Order findByUserEmailAndOrderStatus(String email, String status);
 
 }

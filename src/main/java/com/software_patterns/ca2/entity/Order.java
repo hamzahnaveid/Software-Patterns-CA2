@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.software_patterns.ca2.state.OrderState;
 
 import jakarta.persistence.CascadeType;
@@ -46,6 +47,7 @@ public class Order {
 	private User user;
 	
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "order")
+	@JsonManagedReference
 	private List<CartItem> cartItems;
 	
 	public void setState(OrderState state) {

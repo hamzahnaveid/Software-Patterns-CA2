@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.software_patterns.ca2.entity.Order;
-import com.software_patterns.ca2.entity.Product;
 import com.software_patterns.ca2.repository.OrderRepository;
 
 @Service
@@ -37,7 +36,11 @@ public class OrderDao {
 	}
 	
 	public List<Order> findAllByUserEmail(String email) {
-		return (List<Order>) repo.findAllByUser_Email(email);
+		return (List<Order>) repo.findAllByUserEmail(email);
 	}
-
+	
+	public Order findByUserEmailAndStatus(String email, String status) {
+		return repo.findByUserEmailAndOrderStatus(email, status);
+	}
+	
 }
