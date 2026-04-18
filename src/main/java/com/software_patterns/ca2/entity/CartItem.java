@@ -4,6 +4,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.software_patterns.ca2.composite.OrderComponent;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -16,7 +17,7 @@ import lombok.Data;
 
 @Entity
 @Data
-public class CartItem {
+public class CartItem implements OrderComponent {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,4 +39,9 @@ public class CartItem {
 	@JoinColumn(name = "order_id", referencedColumnName = "id")
 	@JsonBackReference
 	private Order order;
+
+	@Override
+	public double getTotal() {
+		return price * quantity;
+	}
 }

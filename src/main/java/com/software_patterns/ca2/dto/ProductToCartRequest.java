@@ -7,5 +7,6 @@ public class ProductToCartRequest {
 	
 	private String userEmail;
 	private int productId;
+	private int quantity;
 
 }

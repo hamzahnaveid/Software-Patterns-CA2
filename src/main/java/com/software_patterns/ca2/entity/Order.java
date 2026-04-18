@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.software_patterns.ca2.composite.OrderComponent;
 import com.software_patterns.ca2.state.OrderState;
 
 import jakarta.persistence.CascadeType;
@@ -23,7 +24,7 @@ import lombok.Data;
 @Entity
 @Data
 @Table(name = "orders")
-public class Order {
+public class Order implements OrderComponent {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -58,4 +59,20 @@ public class Order {
 	public void nextState() {
 	    this.state.next(this);
 	}
+	
+	@Override
+    public double getTotal() {
+		return cartItems.stream().mapToDouble(OrderComponent::getTotal).sum();
+    }
+
+    public void addItem(CartItem item) {
+        cartItems.add(item);
+        item.setOrder(this);
+    }
+
+    public void removeItem(CartItem item) {
+        cartItems.remove(item);
+        item.setOrder(null);
+
+    }
 }

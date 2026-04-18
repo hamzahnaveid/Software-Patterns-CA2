@@ -81,11 +81,6 @@ public class CustomerProductController {
 	@ResponseBody
 	public ResponseEntity<?> addProductToCart(@RequestBody ProductToCartRequest request) {
 		Order activeOrder = orderDao.findByUserEmailAndStatus(request.getUserEmail(), "PENDING");
-//		CartItem cartItem = cartItemDao.findByProductIdAndOrderIdAndUserEmail(request.getProductId(), activeOrder.getId(), request.getUserEmail());
-//		
-//		if (cartItem != null) {
-//			return ResponseEntity.status(HttpStatus.CONFLICT).body(null);		
-//		}
 		
 		Product product = productDao.findById(request.getProductId()).get();
 		User user = userDao.findByEmail(request.getUserEmail()).get();
@@ -93,16 +88,18 @@ public class CustomerProductController {
 		CartItem cart = new CartItem();
 		cart.setProduct(product);
 		cart.setPrice(product.getPrice());
-		cart.setQuantity(1);
+		cart.setQuantity(request.getQuantity());
 		cart.setUser(user);
 		cart.setOrder(activeOrder);
 		
+		activeOrder.addItem(cart);
+		
 		cartItemDao.save(cart);
 		
-		activeOrder.setTotal(activeOrder.getTotal() + cart.getPrice());
-		activeOrder.setAmount(activeOrder.getAmount() + cart.getPrice());
-		activeOrder.getCartItems().add(cart);
-		
+		double newTotal = activeOrder.getTotal();
+		activeOrder.setTotal(newTotal);
+		activeOrder.setAmount(newTotal);
+
 		orderDao.save(activeOrder);
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(cart);
