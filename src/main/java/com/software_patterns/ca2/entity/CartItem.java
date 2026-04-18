@@ -5,6 +5,7 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.software_patterns.ca2.composite.OrderComponent;
+import com.software_patterns.ca2.dto.CartItemDto;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -43,5 +44,18 @@ public class CartItem implements OrderComponent {
 	@Override
 	public double getTotal() {
 		return price * quantity;
+	}
+	
+	public CartItemDto getCartDto() {
+		CartItemDto cartDto = new CartItemDto();
+		cartDto.setId(id);
+		cartDto.setPrice(price);
+		cartDto.setProductId(product.getId());
+		cartDto.setQuantity(quantity);
+		cartDto.setUserEmail(user.getEmail());
+		cartDto.setProductName(product.getName());
+		cartDto.setImage(product.getImage());
+		
+		return cartDto;
 	}
 }
