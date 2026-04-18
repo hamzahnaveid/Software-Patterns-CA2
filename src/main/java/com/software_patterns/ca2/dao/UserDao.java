@@ -1,5 +1,6 @@
 package com.software_patterns.ca2.dao;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,10 @@ public class UserDao {
 	
 	public boolean userExists(String email) {
 		return repo.existsById(email);
+	}
+	
+	public List<User> findAll() {
+		return (List<User>) repo.findAll();
 	}
 
 }
