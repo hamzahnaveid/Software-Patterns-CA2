@@ -20,6 +20,7 @@ import com.software_patterns.ca2.dao.CartItemDao;
 import com.software_patterns.ca2.dao.OrderDao;
 import com.software_patterns.ca2.dao.ProductDao;
 import com.software_patterns.ca2.dao.UserDao;
+import com.software_patterns.ca2.dao.VoucherDao;
 import com.software_patterns.ca2.dto.CartItemDto;
 import com.software_patterns.ca2.dto.OrderDto;
 import com.software_patterns.ca2.dto.ProductToCartRequest;
@@ -27,6 +28,7 @@ import com.software_patterns.ca2.entity.CartItem;
 import com.software_patterns.ca2.entity.Order;
 import com.software_patterns.ca2.entity.Product;
 import com.software_patterns.ca2.entity.User;
+import com.software_patterns.ca2.entity.Voucher;
 import com.software_patterns.ca2.service.ProductSearchService;
 import com.software_patterns.ca2.service.ProductSortService;
 
@@ -45,6 +47,9 @@ public class CustomerProductController {
 	
 	@Autowired
 	CartItemDao cartItemDao;
+	
+	@Autowired
+	VoucherDao voucherDao;
 	
 	@Autowired
 	UserDao userDao;
@@ -125,6 +130,29 @@ public class CustomerProductController {
 		orderDto.setCartItems(cartItemDtoList);;
 		
 		return ResponseEntity.status(HttpStatus.OK).body(orderDto);
+	}
+	
+	@CrossOrigin(origins = "http://localhost:4200")
+	@GetMapping("/apply-voucher/{userEmail}/{code}")
+	@ResponseBody
+	public ResponseEntity<?> applyVoucher(@PathVariable String userEmail, @PathVariable String code) {
+		Order activeOrder = orderDao.findByUserEmailAndStatus(userEmail, "PENDING");
+		Voucher voucher = voucherDao.findByCode(code);
+		
+		if (voucher == null) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid voucher");
+		}
+		
+		double discountAmount = (voucher.getDiscount() / 100.0) * activeOrder.getTotal();
+		double finalAmount = activeOrder.getTotal() - discountAmount;
+		
+		activeOrder.setDiscount(discountAmount);
+		activeOrder.setAmount(finalAmount);
+		
+		activeOrder.setVoucher(voucherDao.findByCode(code));	
+		orderDao.save(activeOrder);
+		
+		return new ResponseEntity<>(activeOrder.getOrderDto(), HttpStatus.OK);
 	}
 
 }

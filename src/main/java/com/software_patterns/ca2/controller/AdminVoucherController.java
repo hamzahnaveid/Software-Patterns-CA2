@@ -49,5 +49,4 @@ public class AdminVoucherController {
 	public ResponseEntity<List<Voucher>> getAllVouchers() {
 		return new ResponseEntity<List<Voucher>>(voucherDao.findAll(), HttpStatus.OK);
 	}
-
 }

@@ -7,5 +7,7 @@ import com.software_patterns.ca2.entity.Voucher;
 
 @Repository
 public interface VoucherRepository extends CrudRepository<Voucher, Integer>{
+	
+	Voucher findByCode(String code);
 
 }

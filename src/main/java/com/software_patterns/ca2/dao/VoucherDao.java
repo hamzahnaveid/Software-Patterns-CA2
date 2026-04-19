@@ -32,6 +32,10 @@ public class VoucherDao {
 		repo.deleteById(id);
 	}
 	
+	public Voucher findByCode(String code) {
+		return repo.findByCode(code);
+	}
+	
 	public List<Voucher> findAll() {
 		return (List<Voucher>) repo.findAll();
 	}

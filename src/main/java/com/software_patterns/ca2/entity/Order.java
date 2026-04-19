@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.software_patterns.ca2.composite.OrderComponent;
+import com.software_patterns.ca2.dto.OrderDto;
 import com.software_patterns.ca2.state.OrderState;
 
 import jakarta.persistence.CascadeType;
@@ -47,6 +48,10 @@ public class Order implements OrderComponent {
 	@JoinColumn(name = "user_email", referencedColumnName = "email")
 	private User user;
 	
+	@ManyToOne(cascade = CascadeType.MERGE)
+	@JoinColumn(name = "voucher_id", referencedColumnName = "id")
+	private Voucher voucher;
+	
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "order")
 	@JsonManagedReference
 	private List<CartItem> cartItems;
@@ -74,5 +79,23 @@ public class Order implements OrderComponent {
         cartItems.remove(item);
         item.setOrder(null);
 
+    }
+    
+    public OrderDto getOrderDto() {
+    	OrderDto orderDto = new OrderDto();
+    	
+    	orderDto.setId(id);
+    	orderDto.setAddress(address);
+    	orderDto.setTrackingId(trackingId);
+    	orderDto.setAmount(amount);
+    	orderDto.setDate(date);
+    	orderDto.setOrderStatus(orderStatus);
+    	orderDto.setUserName(user.getName());
+    	
+    	if (voucher != null) {
+    		orderDto.setVoucherName(voucher.getName());
+    	}
+    	
+    	return orderDto;
     }
 }
